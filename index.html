@@ -134,7 +134,7 @@
 
   /* Emoji — fluid size, no fixed margins (gap handles spacing) */
   .fart-emoji {
-    font-size:clamp(44px,10dvh,72px);
+    font-size:clamp(52px,12dvh,90px);
     line-height:1.15;
     animation:wobble 2s ease-in-out infinite;
     display:flex;
@@ -143,8 +143,8 @@
     flex-shrink:0;
   }
   .fart-emoji img {
-    width:clamp(44px,10dvh,72px);
-    height:clamp(44px,10dvh,72px);
+    width:clamp(52px,12dvh,90px);
+    height:clamp(52px,12dvh,90px);
     object-fit:contain;
   }
   @keyframes wobble{
@@ -156,7 +156,7 @@
 
   .fart-name {
     font-family:'Lilita One',cursive;
-    font-size:clamp(18px,5dvh,34px);
+    font-size:clamp(24px,6.5dvh,46px);
     color:#fff;
     text-align:center;
     line-height:1.15;
@@ -164,7 +164,7 @@
     flex-shrink:0;
   }
   .fart-subtitle {
-    font-size:clamp(10px,1.6dvh,13px);
+    font-size:clamp(12px,2dvh,17px);
     color:rgba(123,193,66,0.6);
     font-weight:700;
     text-transform:uppercase;
@@ -172,7 +172,7 @@
     flex-shrink:0;
   }
   .fart-description {
-    font-size:clamp(12px,2dvh,16px);
+    font-size:clamp(14px,2.6dvh,22px);
     color:rgba(255,255,255,0.85);
     text-align:center;
     line-height:1.45;
@@ -450,20 +450,23 @@
   document.addEventListener("touchstart",e=>{tX=e.touches[0].clientX;},{passive:true});
   document.addEventListener("touchend",e=>{const dx=e.changedTouches[0].clientX-tX;if(Math.abs(dx)>50)navigate(dx>0?-1:1);},{passive:true});
 
-  // 24-hour scan gate
+  // Pure rolling 24-hour elapsed-time gate
   (function() {
     var KEY = 'faf_scan_ts';
     var now = Date.now();
     var stored = localStorage.getItem(KEY);
     if (stored) {
       var elapsed = now - parseInt(stored, 10);
-      if (elapsed > 24 * 60 * 60 * 1000) {
-        localStorage.removeItem(KEY);
+      if (elapsed >= 24 * 60 * 60 * 1000) {
+        // 24+ hours — show gate, do NOT reset stamp
+        // Gate stays until a fresh QR scan clears it
         document.getElementById('expired-screen').classList.add('show');
         document.getElementById('card').style.display = 'none';
         return;
       }
+      // Under 24 hours — show content, no stamp change needed
     } else {
+      // No record — fresh scan, start the clock
       localStorage.setItem(KEY, now.toString());
     }
   })();
